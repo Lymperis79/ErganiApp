@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Ergani Manager
+Comment=Greek Ergani labour management integration
+Exec=/opt/ErganiManager/ErganiManager
+Icon=/opt/ErganiManager/erganimanager.png
+Terminal=false
+Type=Application
+Categories=Office;Finance;
+StartupNotify=true
+StartupWMClass=ErganiManager.UI
