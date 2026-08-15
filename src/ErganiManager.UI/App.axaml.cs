@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -22,42 +24,85 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            // Shut down when the MainWindow is closed — essential so the process
-            // actually exits when the user closes any top-level window.
+            // Exit when the user closes the main window.
             desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
 
-            _ = BootstrapAsync(desktop);
+            // We must set MainWindow SYNCHRONOUSLY before returning from this
+            // method — Avalonia checks it immediately. Use a minimal splash
+            // window while BootstrapAsync runs (DB probe, EF health check).
+            var splash = BuildSplash();
+            desktop.MainWindow = splash;
+            splash.Show();
+
+            // Fire-and-forget — transitions away from splash once ready.
+            _ = BootstrapAsync(desktop, splash);
         }
 
         base.OnFrameworkInitializationCompleted();
     }
 
-    private async System.Threading.Tasks.Task BootstrapAsync(
-        IClassicDesktopStyleApplicationLifetime desktop)
+    // ── Bootstrap ─────────────────────────────────────────────────────────────
+
+    private static Window BuildSplash()
     {
-        var connectionState = Program.Services.GetRequiredService<IConnectionStateService>();
-        var state = await connectionState.EvaluateAsync();
-        Log.Information("Startup connection state: {State}.", state);
-
-        switch (state)
+        var splash = new Window
         {
-            case AppConnectionState.FirstRun:
-            case AppConnectionState.SchemaIncomplete:
-                ShowDatabaseSetup(desktop, isRetry: state == AppConnectionState.SchemaIncomplete);
-                break;
+            Title = "Ergani Manager",
+            Width = 340,
+            Height = 160,
+            WindowStartupLocation = WindowStartupLocation.CenterScreen,
+            CanResize = false,
+            SystemDecorations = Avalonia.Controls.WindowDecorations.BorderOnly,
+            Content = new Avalonia.Controls.TextBlock
+            {
+                Text = "Starting…",
+                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
+                VerticalAlignment   = Avalonia.Layout.VerticalAlignment.Center,
+                FontSize = 16
+            }
+        };
+        return splash;
+    }
 
-            case AppConnectionState.Normal:
-            case AppConnectionState.Degraded:
-                ShowLogin(desktop, isDegraded: state == AppConnectionState.Degraded);
-                break;
+    private async Task BootstrapAsync(
+        IClassicDesktopStyleApplicationLifetime desktop, Window splash)
+    {
+        try
+        {
+            var connectionState = Program.Services.GetRequiredService<IConnectionStateService>();
+            var state = await connectionState.EvaluateAsync();
+            Log.Information("Startup connection state: {State}.", state);
+
+            switch (state)
+            {
+                case AppConnectionState.FirstRun:
+                case AppConnectionState.SchemaIncomplete:
+                    ShowDatabaseSetup(desktop,
+                        isRetry: state == AppConnectionState.SchemaIncomplete);
+                    break;
+
+                case AppConnectionState.Normal:
+                case AppConnectionState.Degraded:
+                    ShowLogin(desktop,
+                        isDegraded: state == AppConnectionState.Degraded);
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Fatal error during bootstrap.");
+            // Show the error in the splash window so the user sees something.
+            if (splash.Content is Avalonia.Controls.TextBlock tb)
+                tb.Text = $"Startup error:\n{ex.Message}";
         }
     }
 
     // ── Window transitions ────────────────────────────────────────────────────
 
     /// <summary>
-    /// Transitions to a new MainWindow and closes the old one.
-    /// Always call this instead of setting desktop.MainWindow directly.
+    /// Atomically sets the new MainWindow, shows it, then closes the previous one.
+    /// Closing the previous window AFTER the new one is shown avoids a race where
+    /// closing the only open window triggers OnMainWindowClose shutdown.
     /// </summary>
     private static void TransitionTo(
         IClassicDesktopStyleApplicationLifetime desktop, Window next)
@@ -75,10 +120,8 @@ public partial class App : Application
 
         if (isRetry)
             vm.StatusMessage =
-                "⚠️ The database was configured but the schema could not be applied " +
-                "(a previous setup attempt failed). Fix the settings below and try again.";
+                "⚠️ A previous setup attempt failed. Fix the settings below and try again.";
 
-        // When setup completes successfully, close this window and show Login.
         vm.SetupCompleted += (_, _) => ShowLogin(desktop, isDegraded: false);
 
         TransitionTo(desktop, new DatabaseSetupView { DataContext = vm });

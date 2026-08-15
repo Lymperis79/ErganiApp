@@ -45,41 +45,42 @@
             </ItemsControl>
 
             <Border IsVisible="{Binding IsEditing}" Background="#1A1D23" CornerRadius="8" Padding="20">
-                <StackPanel Spacing="10">
-                    <TextBlock Text="Branch Details" FontSize="17" FontWeight="SemiBold" />
-
-                    <TextBlock Text="{Binding Loc[BranchNumber]}" FontWeight="SemiBold" />
-                    <NumericUpDown Value="{Binding FormBranchNumber}" Minimum="1" Maximum="9999" />
-
-                    <TextBlock Text="Display Name" FontWeight="SemiBold" />
-                    <TextBox Text="{Binding FormName}" />
-
-                    <TextBlock Text="{Binding Loc[Address]}" FontWeight="SemiBold" />
-                    <TextBox Text="{Binding FormAddress}" />
-
-                    <TextBlock Text="{Binding Loc[SepeCode]}" FontWeight="SemiBold" />
-                    <TextBox Text="{Binding FormSepeServiceCode}" />
-
-                    <TextBlock Text="OAED Service Code (optional)" FontWeight="SemiBold" />
-                    <TextBox Text="{Binding FormOaedServiceCode}" />
-
-                    <TextBlock Text="{Binding Loc[ActivityCode]}" FontWeight="SemiBold" />
-                    <TextBox Text="{Binding FormActivityCode}" />
-
-                    <TextBlock Text="{Binding Loc[MunicipalCode]}" FontWeight="SemiBold" />
-                    <TextBox Text="{Binding FormKallikratisMunicipalCode}" />
-
-                    <CheckBox Content="{Binding Loc[Active]}" IsChecked="{Binding FormIsActive}" />
-
-                    <TextBlock Text="{Binding StatusMessage}" Foreground="Red" TextWrapping="Wrap" Margin="0,8,0,0" />
-
-                    <Grid ColumnDefinitions="*,*" Margin="0,12,0,0">
-                        <Button Grid.Column="0" Content="{Binding Loc[Cancel]}" Command="{Binding CancelEditCommand}"
-                                HorizontalAlignment="Stretch" Margin="0,0,6,0" />
-                        <Button Grid.Column="1" Content="{Binding Loc[Save]}" Command="{Binding SaveCommand}" Classes="accent"
-                                HorizontalAlignment="Stretch" Margin="6,0,0,0" />
+                <DockPanel LastChildFill="True">
+                    <Grid DockPanel.Dock="Bottom" ColumnDefinitions="*,*" Margin="0,12,0,0">
+                        <Button Grid.Column="0" Content="{Binding Loc[Cancel]}" Command="{Binding CancelEditCommand}" HorizontalAlignment="Stretch" Margin="0,0,6,0" />
+                        <Button Grid.Column="1" Content="{Binding Loc[Save]}" Command="{Binding SaveCommand}" Classes="accent" HorizontalAlignment="Stretch" Margin="6,0,0,0" />
                     </Grid>
-                </StackPanel>
+                    <ScrollViewer>
+                        <StackPanel Spacing="10">
+                            <TextBlock Text="Branch Details" FontSize="17" FontWeight="SemiBold" />
+
+                            <TextBlock Text="{Binding Loc[BranchNumber]}" FontWeight="SemiBold" />
+                            <NumericUpDown Value="{Binding FormBranchNumber}" Minimum="1" Maximum="9999" />
+
+                            <TextBlock Text="Display Name" FontWeight="SemiBold" />
+                            <TextBox Text="{Binding FormName}" />
+
+                            <TextBlock Text="{Binding Loc[Address]}" FontWeight="SemiBold" />
+                            <TextBox Text="{Binding FormAddress}" />
+
+                            <TextBlock Text="{Binding Loc[SepeCode]}" FontWeight="SemiBold" />
+                            <TextBox Text="{Binding FormSepeServiceCode}" />
+
+                            <TextBlock Text="OAED Service Code (optional)" FontWeight="SemiBold" />
+                            <TextBox Text="{Binding FormOaedServiceCode}" />
+
+                            <TextBlock Text="{Binding Loc[ActivityCode]}" FontWeight="SemiBold" />
+                            <TextBox Text="{Binding FormActivityCode}" />
+
+                            <TextBlock Text="{Binding Loc[MunicipalCode]}" FontWeight="SemiBold" />
+                            <TextBox Text="{Binding FormKallikratisMunicipalCode}" />
+
+                            <CheckBox Content="{Binding Loc[Active]}" IsChecked="{Binding FormIsActive}" />
+
+                            <TextBlock Text="{Binding StatusMessage}" Foreground="Red" TextWrapping="Wrap" Margin="0,8,0,0" />
+                        </StackPanel>
+                    </ScrollViewer>
+                </DockPanel>
             </Border>
 
         </StackPanel>

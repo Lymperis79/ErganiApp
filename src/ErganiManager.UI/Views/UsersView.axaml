@@ -46,41 +46,42 @@
 
             <!-- Create user form -->
             <Border IsVisible="{Binding IsCreating}" Background="#1A1D23" CornerRadius="8" Padding="20">
-                <StackPanel Spacing="10">
-                    <TextBlock Text="New User" FontSize="17" FontWeight="SemiBold" />
-
-                    <TextBlock Text="{Binding Loc[Username]}" FontWeight="SemiBold" />
-                    <TextBox Text="{Binding FormUsername}" />
-
-                    <TextBlock Text="{Binding Loc[Password]}" FontWeight="SemiBold" />
-                    <TextBox Text="{Binding FormPassword}" PasswordChar="•" />
-
-                    <TextBlock Text="{Binding Loc[Role]}" FontWeight="SemiBold" />
-                    <ComboBox ItemsSource="{Binding AvailableRoles}" SelectedItem="{Binding FormRole}"
-                              HorizontalAlignment="Stretch" />
-
-                    <StackPanel IsVisible="{Binding IsFormRoleOperator}"
-                                Spacing="10">
-                        <TextBlock Text="{Binding Loc[LockToBranch]}" FontWeight="SemiBold" />
-                        <ComboBox ItemsSource="{Binding AvailableBranches}" SelectedItem="{Binding FormBranch}"
-                                  HorizontalAlignment="Stretch">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Name}" />
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                    </StackPanel>
-
-                    <TextBlock Text="{Binding StatusMessage}" Foreground="Red" TextWrapping="Wrap" Margin="0,8,0,0" />
-
-                    <Grid ColumnDefinitions="*,*" Margin="0,12,0,0">
-                        <Button Grid.Column="0" Content="{Binding Loc[Cancel]}" Command="{Binding CancelCreateCommand}"
-                                HorizontalAlignment="Stretch" Margin="0,0,6,0" />
-                        <Button Grid.Column="1" Content="{Binding Loc[Save]}" Command="{Binding SaveNewUserCommand}" Classes="accent"
-                                HorizontalAlignment="Stretch" Margin="6,0,0,0" />
+                <DockPanel LastChildFill="True">
+                    <Grid DockPanel.Dock="Bottom" ColumnDefinitions="*,*" Margin="0,12,0,0">
+                        <Button Grid.Column="0" Content="{Binding Loc[Cancel]}" Command="{Binding CancelCreateCommand}" HorizontalAlignment="Stretch" Margin="0,0,6,0" />
+                        <Button Grid.Column="1" Content="{Binding Loc[Save]}" Command="{Binding SaveNewUserCommand}" Classes="accent" HorizontalAlignment="Stretch" Margin="6,0,0,0" />
                     </Grid>
-                </StackPanel>
+                    <ScrollViewer>
+                        <StackPanel Spacing="10">
+                            <TextBlock Text="New User" FontSize="17" FontWeight="SemiBold" />
+
+                            <TextBlock Text="{Binding Loc[Username]}" FontWeight="SemiBold" />
+                            <TextBox Text="{Binding FormUsername}" />
+
+                            <TextBlock Text="{Binding Loc[Password]}" FontWeight="SemiBold" />
+                            <TextBox Text="{Binding FormPassword}" PasswordChar="•" />
+
+                            <TextBlock Text="{Binding Loc[Role]}" FontWeight="SemiBold" />
+                            <ComboBox ItemsSource="{Binding AvailableRoles}" SelectedItem="{Binding FormRole}"
+                                      HorizontalAlignment="Stretch" />
+
+                            <StackPanel IsVisible="{Binding IsFormRoleOperator}"
+                                        Spacing="10">
+                                <TextBlock Text="{Binding Loc[LockToBranch]}" FontWeight="SemiBold" />
+                                <ComboBox ItemsSource="{Binding AvailableBranches}" SelectedItem="{Binding FormBranch}"
+                                          HorizontalAlignment="Stretch">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}" />
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <TextBlock Text="{Binding StatusMessage}" Foreground="Red" TextWrapping="Wrap" Margin="0,8,0,0" />
+                        </StackPanel>
+                    </ScrollViewer>
+                </DockPanel>
             </Border>
 
             <!-- Reset password panel -->
@@ -91,12 +92,6 @@
                                FontSize="16" FontWeight="SemiBold" />
                     <TextBox Text="{Binding ResetPasswordValue}" PasswordChar="•" Watermark="New password (min 8 characters)" />
                     <TextBlock Text="{Binding StatusMessage}" Foreground="Red" TextWrapping="Wrap" />
-                    <Grid ColumnDefinitions="*,*">
-                        <Button Grid.Column="0" Content="{Binding Loc[Cancel]}" Command="{Binding CancelResetPasswordCommand}"
-                                HorizontalAlignment="Stretch" Margin="0,0,6,0" />
-                        <Button Grid.Column="1" Content="{Binding Loc[ResetPassword]}" Command="{Binding ConfirmResetPasswordCommand}"
-                                Classes="accent" HorizontalAlignment="Stretch" Margin="6,0,0,0" />
-                    </Grid>
                 </StackPanel>
             </Border>
 
